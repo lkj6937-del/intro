@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>제휴 마케팅 관리</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--tx:#1d2330;--mut:#667085;--bd:#dfe3ea;--ac:#2f6df6;--acx:#fff;--hl:#fff3b0;--hd:#eef1f6;--dg:#d92d20;}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14171d;--card:#1c2028;--tx:#e8ebf2;--mut:#9aa3b5;--bd:#2f3541;--ac:#5b8cff;--acx:#0b1020;--hl:#5a4b00;--hd:#252a35;--dg:#ff7b72}}
+:root[data-theme="dark"]{--bg:#14171d;--card:#1c2028;--tx:#e8ebf2;--mut:#9aa3b5;--bd:#2f3541;--ac:#5b8cff;--acx:#0b1020;--hl:#5a4b00;--hd:#252a35;--dg:#ff7b72}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:radial-gradient(900px 260px at 8% -10%,color-mix(in srgb,var(--ac) 16%,transparent),transparent),var(--bg);color:var(--tx);font:14px/1.4 -apple-system,"Apple SD Gothic Neo","Malgun Gothic",Pretendard,sans-serif;display:flex;flex-direction:column}
+input,select,textarea,button{font:inherit;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:6px;padding:6px 8px;min-width:0}
+button{cursor:pointer}
+
+.hero{display:flex;gap:10px;align-items:stretch;padding:12px 12px 0;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;margin-right:6px}
+.brand small{display:block;font-weight:500;font-size:12px;color:var(--mut)}
+.logo{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--ac),#9b6bff);display:grid;place-items:center;color:#fff;font-size:20px}
+.stat{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:8px 14px;min-width:110px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.stat small{color:var(--mut);display:block;font-size:12px}.stat b{font-size:18px}
+
+.top{margin:10px 12px 0;padding:10px 12px;background:var(--card);border:1px solid var(--bd);border-radius:14px;box-shadow:0 2px 10px rgba(0,0,0,.06);display:grid;grid-template-columns:110px 130px 1.4fr 1.4fr 100px 1fr auto;gap:6px;align-items:center}
+.pri{border-radius:10px;background:linear-gradient(135deg,var(--ac),#9b6bff);border:0;color:#fff;font-weight:600;padding:7px 14px}
+
+.bar{display:flex;gap:6px;align-items:center;padding:8px 12px;flex-wrap:wrap}
+.tabs{display:flex;gap:4px;flex:1;overflow-x:auto;padding-bottom:2px}
+.tab{white-space:nowrap;border-radius:16px;padding:5px 12px;transition:.15s}
+.tab:hover{border-color:var(--ac)}
+.tab.on{background:var(--ac);color:var(--acx);border-color:var(--ac);box-shadow:0 2px 8px color-mix(in srgb,var(--ac) 45%,transparent)}
+.tab small{opacity:.7;margin-left:4px}
+.tab .x{margin-left:6px;opacity:.7}
+.tab.add{border-style:dashed;color:var(--ac);font-weight:600}
+.newp{border-radius:16px;width:160px;border-color:var(--ac)}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}
+
+.sw{position:relative}
+#sug{position:absolute;z-index:30;top:100%;right:0;width:320px;max-height:260px;overflow:auto;background:var(--card);border:1px solid var(--bd);border-radius:8px;display:none;box-shadow:0 6px 20px rgba(0,0,0,.2)}
+#sug div{padding:7px 10px;cursor:pointer;border-bottom:1px solid var(--bd)}
+#sug div:hover{background:var(--hd)}#sug span{color:var(--mut);font-size:12px}
+
+.wrap{flex:1;min-height:0;overflow:scroll;margin:10px 12px 0;border:1px solid var(--bd);border-radius:14px;background:var(--card);box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.wrap::-webkit-scrollbar{height:14px;width:14px}.wrap::-webkit-scrollbar-thumb{background:var(--mut);border-radius:8px;border:3px solid var(--card)}
+table{border-collapse:collapse;table-layout:fixed;width:100%;min-width:1100px}
+th{position:sticky;top:0;background:var(--hd);z-index:5;padding:8px;text-align:left;border-bottom:1px solid var(--bd);font-weight:600;font-size:12px;color:var(--mut);letter-spacing:.03em}
+th:last-child{padding:8px 2px;font-size:11px;text-align:center}
+td{padding:3px;border-bottom:1px solid var(--bd);vertical-align:top}
+td input,td textarea,td select{width:100%;border-color:transparent;background:transparent;padding:5px}
+td input:focus,td textarea:focus,td select:focus{border-color:var(--ac);background:var(--card)}
+textarea{resize:none;overflow:hidden;display:block;line-height:1.35}
+tbody tr:hover td{background:var(--hd)}
+tr.hl td{background:var(--hl)!important}
+.lk{display:flex;gap:4px}.lk a{flex:none;text-decoration:none;background:linear-gradient(135deg,var(--ac),#9b6bff);color:#fff;padding:5px 9px;border-radius:6px;font-size:13px}
+.lk textarea{flex:1;min-width:0}
+.cp{flex:none;width:24px;height:28px;padding:0;margin-top:2px;font-size:13px;line-height:1;border-radius:6px;color:var(--mut)}
+.cp:hover{color:var(--ac);border-color:var(--ac)}.cp.ok{color:#12b886;border-color:#12b886}
+.del{color:var(--dg);padding:4px 8px}
+.mini{width:20px;height:20px;padding:0;margin-top:5px;line-height:1;font-size:14px;border-radius:50%;opacity:.5}
+.mini:hover{opacity:1;background:var(--dg);color:#fff;border-color:var(--dg)}
+.num{text-align:right}
+
+.foot{padding:8px 12px;display:flex;gap:16px;align-items:center;justify-content:space-between;color:var(--mut);flex-wrap:wrap}
+.foot b{color:var(--ac);font-size:18px}
+.empty{padding:40px;text-align:center;color:var(--mut)}
+
+/* 채널별 ID & URL */
+.chp{flex:1;min-height:0;overflow:auto;margin:10px 12px 12px}
+.chhead{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.chhead b{font-size:17px}.chhead span{color:var(--mut);flex:1}
+.chgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px}
+.chcard{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:12px 14px;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.chtop{display:flex;gap:6px;align-items:center;margin-bottom:8px}
+.chn{flex:1;font-weight:700;font-size:16px;color:var(--ac);border-color:transparent;background:transparent}
+.chn:focus{border-color:var(--ac)}
+.chrow{display:flex;gap:6px;align-items:center;margin-top:6px}
+.chrow label{width:34px;flex:none;font-weight:700;color:var(--mut);font-size:12px}
+.chrow input{flex:1;min-width:0}
+.chrow .cp{margin-top:0;height:32px;width:28px}
+.op{flex:none;text-decoration:none;background:linear-gradient(135deg,var(--ac),#9b6bff);color:#fff;padding:7px 11px;border-radius:6px;font-size:13px}
+
+.th{flex:none;width:34px;height:34px;object-fit:cover;border-radius:6px;border:1px solid var(--bd);cursor:pointer;margin-top:1px}
+.ib{width:34px}
+/* 팝업 */
+#md{position:fixed;inset:0;z-index:100;align-items:center;justify-content:center;padding:16px}
+.mbg{position:absolute;inset:0;background:rgba(0,0,0,.5)}
+.mbox{position:relative;background:var(--card);border:1px solid var(--bd);border-radius:16px;width:min(980px,100%);max-height:88vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.mh{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--bd);font-size:15px}
+.mb{overflow:auto;padding:0 16px 12px}
+.mb table{min-width:640px}.mb td{padding:8px;word-break:break-word}
+.mb tr.go{cursor:pointer}.mb tr.go:hover td{background:var(--hd)}
+.mb .lk a{display:inline-block}
+
+@media(max-width:900px){.top{grid-template-columns:1fr 1fr}.top .pri{grid-column:1/-1}}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="brand"><div class="logo">🔗</div><div>제휴 마케팅 관리<small>플랫폼별 시트 · 상품 · 채널 ID/URL 한번에</small></div></div>
+  <div class="stat"><small>총 상품</small><b id="sCnt">0개</b></div>
+  <div class="stat"><small>플랫폼</small><b id="sPl">0개</b></div>
+  <div class="stat"><small>가격 합계</small><b id="sTot">0원</b></div>
+</div>
+
+<div class="top">
+  <input type="date" id="fDate" title="날짜">
+  <input id="fPlat" list="platList" placeholder="플랫폼" title="새 이름을 쓰면 시트가 새로 생겨요">
+  <input id="fName" placeholder="상품명">
+  <input id="fLink" placeholder="링크 (https://…)">
+  <input id="fPrice" inputmode="numeric" placeholder="가격">
+  <input id="fNote" placeholder="비고">
+  <button class="pri" id="add">시트에 추가</button>
+  <datalist id="platList"></datalist>
+</div>
+
+<div class="bar">
+  <div class="tabs" id="tabs"></div>
+  <span id="dsWrap" style="display:none"></span>
+  <input id="pq" list="platList" placeholder="🏷 플랫폼 조회 (팝업)" style="width:170px" title="플랫폼명을 선택하거나 입력 후 Enter">
+  <div class="sw"><input id="q" placeholder="🔍 상품명 검색 → Enter로 해당 줄 이동" style="width:240px"><div id="sug"></div></div>
+  <button id="exp" style="display:none">CSV 내보내기</button>
+  <label class="tab" style="display:none;cursor:pointer;border:1px solid var(--bd)">CSV 불러오기<input type="file" id="imp" accept=".csv" hidden></label>
+</div>
+
+<div class="wrap" id="wrap">
+  <table>
+    <colgroup><col style="width:110px"><col style="width:64px"><col style="width:130px"><col style="width:330px"><col style="width:260px"><col style="width:110px"><col style="width:200px"><col style="width:36px"></colgroup>
+    <thead><tr><th>플랫폼</th><th>순번</th><th>날짜</th><th>상품명</th><th>링크</th><th>가격</th><th>비고</th><th>삭제</th></tr></thead>
+    <tbody id="tb"></tbody>
+  </table>
+  <div class="empty" id="empty" style="display:none">아직 추가된 항목이 없어요. 위에서 입력하고 "시트에 추가"를 눌러보세요.</div>
+</div>
+
+<div id="chp" class="chp" style="display:none"></div>
+<input type="file" id="imgIn" accept="image/*" hidden>
+
+<div class="foot">
+  <span><span id="cnt"></span> · <span id="st"></span> <button onclick="load()" style="padding:2px 8px">↻ 시트에서 새로고침</button></span>
+  <span>가격 합계 <b id="sum">0</b>원</span>
+</div>
+
+<div id="md" style="display:none"><div class="mbg"></div><div class="mbox"><div class="mh"><b id="mt"></b><button id="mx">닫기 ✕</button></div><div class="mb" id="mbody"></div></div></div>
+
+<script>
+(function(){
+ /* ===== 미리보기 모드 자동 감지: google.script 가 없으면 로컬저장소로 동작 ===== */
+ if (typeof google === 'undefined' || !google.script) {
+   const K='aff-preview-v1';let mem=null;
+   try{mem=JSON.parse(localStorage.getItem(K))}catch(e){}
+   if(!mem) mem = { plats: [], rows: [], ch: null };
+   function mk(){
+     let ok=()=>{};
+     const o={ withSuccessHandler(f){ok=f;return o}, withFailureHandler(){return o},
+       getAll(){ setTimeout(()=>ok(JSON.parse(JSON.stringify(mem))),80) },
+       saveAll(j){ mem=JSON.parse(j); try{localStorage.setItem(K,j)}catch(e){}; setTimeout(()=>ok(),80) },
+       uploadImage(d){ setTimeout(()=>ok(d),80) } };
+     return o;
+   }
+   window.google = { script: { get run(){ return mk() } } };
+ }
+})();
+
+const DEFCH=[
+ {ch:'블로그',id:'OUR_AGIT',url:'https://blog.naver.com/kelly_min'},
+ {ch:'클립크리에이터',id:'kellyjjangyup',url:'https://clipcreators.naver.com/web/dashboard'},
+ {ch:'유튜브',id:'@mogibabokelly',url:'https://www.youtube.com/@mogibabokelly'},
+ {ch:'인스타',id:'kellyjjangim',url:'https://www.instagram.com/kellyjjangim/'},
+ {ch:'인포크링크',id:'mogibabokelly',url:'https://link.inpock.co.kr/inpockhome'}];
+
+let adding=false;
+const PAL=['#2f6df6','#f0568c','#12b886','#f59f00','#9b6bff','#15aabf','#fa5252','#82c91e'];
+const col=p=>PAL[Math.max(S.plats.indexOf(p),0)%PAL.length];
+let S={plats:['쿠팡','네이버','알리익스프레스','11번가'],rows:[],ch:null},cur='전체',nid=1;
+
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+const num=v=>parseInt(String(v).replace(/[^\d]/g,''))||0;
+const fmt=n=>n?n.toLocaleString('ko-KR'):'';
+const url=l=>l?(/^https?:\/\//i.test(l)?l:'https://'+l):'';
+$('fDate').value=today();
+
+let saveT=null, loaded=false, saving=false, dirty=false;
+const setSt=t=>{const e=$('st');if(e)e.textContent=t};
+const save=()=>{
+  if(!loaded){ setSt('⚠ 시트를 아직 불러오지 못해 저장하지 않았어요'); return }
+  dirty=true; setSt('저장 대기…'); clearTimeout(saveT); saveT=setTimeout(doSave,400);
+};
+function doSave(){
+  if(!loaded || saving) return;               // 저장 중이면 끝난 뒤 최신 상태로 다시 저장
+  saving=true; dirty=false; setSt('저장 중…');
+  google.script.run
+    .withSuccessHandler(()=>{ saving=false; if(dirty) doSave(); else setSt('✓ 저장됨 '+new Date().toLocaleTimeString('ko-KR')) })
+    .withFailureHandler(e=>{ saving=false; dirty=true; setSt('⚠ 저장 실패, 다시 시도 중: '+(e&&e.message||'')); setTimeout(doSave,3000) })
+    .saveAll(JSON.stringify(S));
+}
+window.addEventListener('beforeunload',e=>{ if(dirty||saving){ e.preventDefault(); e.returnValue='' } });
+function load(){
+  if(dirty||saving){ setSt('저장이 끝난 뒤 새로고침해 주세요'); return }
+  setSt('불러오는 중…');
+  google.script.run.withSuccessHandler(d=>{
+    S=d; loaded=true; dirty=false;
+    let seed=false;
+    if(!S.ch){S.ch=DEFCH.map(x=>Object.assign({},x));seed=true}
+    if(!S.plats || !S.plats.length) S.plats=['쿠팡','네이버','알리익스프레스','11번가'];
+    nid=1; S.rows.forEach(r=>{nid=Math.max(nid,r.id+1)});
+    cur='전체'; $('fPlat').value=S.plats[0];
+    render();
+    setSt('✓ 불러옴');
+    if(seed) save();
+  }).withFailureHandler(e=>setSt('⚠ 불러오기 실패: '+e.message)).getAll();
+}
+
+function seqOf(r){return S.rows.filter(x=>x.plat===r.plat).indexOf(r)+1}
+function view(){
+  return cur==='전체' ? S.plats.flatMap(p=>S.rows.filter(r=>r.plat===p)) : S.rows.filter(r=>r.plat===cur);
+}
+
+function render(hlId){
+  const isCh = cur==='__ch';
+  $('wrap').style.display = isCh?'none':'';
+  document.querySelector('.top').style.display = isCh?'none':'';
+  document.querySelector('.foot').style.display = isCh?'none':'';
+  $('chp').style.display = isCh?'block':'none';
+
+  $('platList').innerHTML=S.plats.map(p=>`<option value="${esc(p)}">`).join('');
+  $('tabs').innerHTML = `<button class="tab ${isCh?'on':''}" data-tab="__ch">🪪 채널별 ID &amp; URL</button>` +
+    ['전체',...S.plats].map(p=>{
+      const n=p==='전체'?S.rows.length:S.rows.filter(r=>r.plat===p).length;
+      const x=p!=='전체'&&n===0?`<span class="x" data-rm="${esc(p)}">×</span>`:'';
+      const dot=p==='전체'?'':`<span class="dot" style="background:${col(p)}"></span>`;
+      return `<button class="tab ${p===cur?'on':''}" data-tab="${esc(p)}">${dot}${esc(p)}<small>${n}</small>${x}</button>`;
+    }).join('') + (adding?'<input id="newP" class="newp" placeholder="새 플랫폼 이름 + Enter">':'<button class="tab add" data-addp="1">＋ 플랫폼 추가</button>');
+
+  if(isCh){ renderCh(); ds(); stats(); return }
+
+  const rows=view();
+  $('tb').innerHTML=rows.map(r=>`<tr data-id="${r.id}" class="${r.id===hlId?'hl':''}">
+  <td><select data-f="plat">${S.plats.map(p=>`<option ${p===r.plat?'selected':''}>${esc(p)}</option>`).join('')}</select></td>
+  <td><input data-f="seq" class="num" value="${seqOf(r)}" inputmode="numeric"></td>
+  <td><input type="date" data-f="date" value="${esc(r.date)}"></td>
+  <td><div class="lk">${r.img?`<img class="th" data-img="view" src="${esc(thumb(r.img,200))}" title="크게 보기">`:`<button class="cp ib" data-img="add" title="이미지 첨부">📷</button>`}<button class="cp" data-cp="name" title="상품명 복사">⧉</button><textarea rows="1" data-f="name">${esc(r.name)}</textarea></div></td>
+  <td><div class="lk"><button class="cp" data-cp="link" title="링크 복사">⧉</button><textarea rows="1" data-f="link">${esc(r.link)}</textarea>${r.link?`<a href="${esc(url(r.link))}" target="_blank" rel="noopener">열기</a>`:''}</div></td>
+  <td><input data-f="price" class="num" inputmode="numeric" value="${fmt(r.price)}"></td>
+  <td><textarea rows="1" data-f="note">${esc(r.note)}</textarea></td>
+  <td style="text-align:center"><button class="del mini" data-del="1" title="이 줄 삭제">×</button></td></tr>`).join('');
+  $('empty').style.display=rows.length?'none':'block';
+  document.querySelectorAll('#tb textarea').forEach(grow);
+  if(hlId){ const el=document.querySelector(`tr[data-id="${hlId}"]`); el&&el.scrollIntoView({block:'center'}) }
+  ds(); stats();
+}
+
+function grow(t){t.style.height='auto';t.style.height=t.scrollHeight+'px'}
+
+function stats(){
+  const v=view();
+  $('cnt').textContent=`${v.length}개 항목`;
+  $('sum').textContent=v.reduce((a,r)=>a+r.price,0).toLocaleString('ko-KR');
+  const tot=S.rows.reduce((a,r)=>a+r.price,0);
+  $('sTot').textContent=tot.toLocaleString('ko-KR')+'원';
+  $('sCnt').textContent=S.rows.length+'개';
+  $('sPl').textContent=S.plats.length+'개';
+}
+
+function add(){
+  if(!loaded){ setSt('⚠ 시트를 아직 불러오지 못했어요. 잠시 후 다시 시도하거나 새로고침해 주세요'); return }
+  const name=$('fName').value.trim(), link=$('fLink').value.trim();
+  if(!name && !link){$('fName').focus();return}
+  let p=$('fPlat').value.trim() || (cur!=='전체' && cur!=='__ch' ? cur : (S.plats[0]||'기본'));
+  if(!S.plats.includes(p)) S.plats.push(p);
+  S.rows.push({id:nid++, plat:p, date:$('fDate').value||today(), name, link, price:num($('fPrice').value), note:$('fNote').value.trim()});
+  ['fName','fLink','fPrice','fNote'].forEach(i=>$(i).value='');
+  cur=p; save(); render(); $('fName').focus();
+  const w=$('wrap'); w.scrollTop=w.scrollHeight;
+}
+$('add').onclick=add;
+document.querySelector('.top').addEventListener('keydown',e=>{
+  if(e.key==='Enter' && e.target.tagName!=='BUTTON'){e.preventDefault(); add()}
+});
+$('fPlat').value=S.plats[0];
+
+$('tabs').onclick=e=>{
+  if(e.target.closest('[data-addp]')){ adding=true; render(); const i=$('newP'); i&&i.focus(); return }
+  const rm=e.target.closest('[data-rm]');
+  if(rm){ S.plats=S.plats.filter(p=>p!==rm.dataset.rm); if(cur===rm.dataset.rm) cur='전체'; save(); render(); return }
+  const t=e.target.closest('[data-tab]');
+  if(t){ cur=t.dataset.tab; if(cur!=='전체' && cur!=='__ch') $('fPlat').value=cur; render() }
+};
+$('tabs').addEventListener('keydown',e=>{
+  if(e.target.id!=='newP') return;
+  if(e.key==='Enter'){ const n=e.target.value.trim(); adding=false; if(n){ if(!S.plats.includes(n)) S.plats.push(n); cur=n; $('fPlat').value=n; save() } render() }
+  else if(e.key==='Escape'){ adding=false; render() }
+});
+$('tabs').addEventListener('focusout',e=>{ if(e.target.id==='newP' && adding){ adding=false; setTimeout(render,0) } });
+
+const tb=$('tb');
+tb.addEventListener('input',e=>{
+  const tr=e.target.closest('tr'); if(!tr) return;
+  const r=S.rows.find(x=>x.id==tr.dataset.id), f=e.target.dataset.f;
+  if(!r||!f||f==='seq'||f==='plat') return;
+  if(e.target.tagName==='TEXTAREA') grow(e.target);
+  if(f==='price') r.price=num(e.target.value); else r[f]=e.target.value;
+  save(); stats();
+});
+tb.addEventListener('change',e=>{
+  const tr=e.target.closest('tr'); if(!tr) return;
+  const r=S.rows.find(x=>x.id==tr.dataset.id), f=e.target.dataset.f;
+  if(f==='plat'){ r.plat=e.target.value; S.rows.splice(S.rows.indexOf(r),1); S.rows.push(r); save(); render(r.id); return }
+  if(f==='seq'){
+    const list=S.rows.filter(x=>x.plat===r.plat);
+    let n=Math.min(Math.max(num(e.target.value),1), list.length);
+    list.splice(list.indexOf(r),1); list.splice(n-1,0,r);
+    S.rows=S.rows.filter(x=>x.plat!==r.plat).concat(list);
+    save(); render(r.id); return;
+  }
+  if(f==='price'){ e.target.value=fmt(r.price) } else if(f==='link'){ render() }
+  save();
+});
+tb.addEventListener('click',e=>{
+  const ib=e.target.closest('[data-img]');
+  if(ib){ const r=S.rows.find(x=>x.id==ib.closest('tr').dataset.id); if(!r) return; imgTarget=r.id; if(ib.dataset.img==='add') $('imgIn').click(); else showImg(r); return }
+  const cp=e.target.closest('[data-cp]');
+  if(cp){ const r=S.rows.find(x=>x.id==cp.closest('tr').dataset.id); if(r) copyTxt(r[cp.dataset.cp]||'', cp); return }
+  if(e.target.closest('[data-del]')){
+    const id=+e.target.closest('tr').dataset.id;
+    S.rows=S.rows.filter(r=>r.id!==id); save(); render();
+  }
+});
+
+/* ===== 복사 ===== */
+function copyTxt(t,b){
+  const done=()=>{ const o=b.textContent; b.textContent='✓'; b.classList.add('ok'); setTimeout(()=>{b.textContent=o;b.classList.remove('ok')},900) };
+  const fb=()=>{ const a=document.createElement('textarea'); a.value=t; a.style.cssText='position:fixed;opacity:0'; document.body.appendChild(a); a.select(); try{document.execCommand('copy'); done()}catch(e){} a.remove() };
+  if(navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(t).then(done, fb); else fb();
+}
+
+/* ===== 상품명 검색 → Enter로 이동 ===== */
+let qi=0;
+$('q').addEventListener('input',()=>{qi=0});
+$('q').addEventListener('keydown',e=>{
+  if(e.key!=='Enter') return;
+  const q=$('q').value.trim().toLowerCase(); if(!q) return;
+  const hits=S.rows.filter(r=>r.name.toLowerCase().includes(q)); if(!hits.length) return;
+  const r=hits[qi%hits.length]; qi++;
+  cur=r.plat; $('sug').style.display='none'; render(r.id);
+});
+$('q').addEventListener('input',()=>{
+  const q=$('q').value.trim().toLowerCase(), box=$('sug');
+  if(!q){ box.style.display='none'; return }
+  const hits=S.rows.filter(r=>r.name.toLowerCase().includes(q)).slice(0,30);
+  box.innerHTML = hits.length ? hits.map(r=>`<div data-go="${r.id}">${esc(r.name)}<br><span>${esc(r.plat)} · ${seqOf(r)}번</span></div>`).join('') : '<div>검색 결과가 없어요</div>';
+  box.style.display='block';
+});
+$('sug').onclick=e=>{
+  const d=e.target.closest('[data-go]'); if(!d) return;
+  const r=S.rows.find(x=>x.id==d.dataset.go); cur=r.plat; $('sug').style.display='none'; render(r.id);
+};
+document.addEventListener('click',e=>{ if(!e.target.closest('.sw')) $('sug').style.display='none' });
+
+/* ===== 플랫폼 조회 팝업 ===== */
+function openPlat(q){
+  q=q.trim().toLowerCase(); if(!q) return;
+  const p=S.plats.find(x=>x.toLowerCase()===q) || S.plats.find(x=>x.toLowerCase().includes(q));
+  if(!p){ $('pq').value=''; $('pq').placeholder='일치하는 플랫폼이 없어요'; return }
+  const l=S.rows.filter(r=>r.plat===p), sum=l.reduce((a,r)=>a+r.price,0);
+  $('mt').innerHTML=`<span class="dot" style="background:${col(p)}"></span>${esc(p)} · ${l.length}개 · 합계 ${sum.toLocaleString('ko-KR')}원`;
+  $('mbody').innerHTML = l.length
+    ? `<table><colgroup><col style="width:50px"><col style="width:100px"><col><col style="width:70px"><col style="width:100px"><col style="width:180px"></colgroup>
+       <thead><tr><th>순번</th><th>날짜</th><th>상품명</th><th>링크</th><th>가격</th><th>비고</th></tr></thead>
+       <tbody>${l.map((r,i)=>`<tr class="go" data-m="${r.id}" title="누르면 시트의 해당 줄로 이동"><td>${i+1}</td><td>${esc(r.date)}</td><td>${r.img?`<img class="th" src="${esc(thumb(r.img,200))}" style="vertical-align:middle;margin-right:6px">`:''}${esc(r.name)}</td><td>${r.link?`<span class="lk"><a href="${esc(url(r.link))}" target="_blank" rel="noopener">열기</a></span>`:''}</td><td class="num">${fmt(r.price)}</td><td>${esc(r.note)}</td></tr>`).join('')}</tbody></table>`
+    : '<div class="empty">이 플랫폼에는 아직 항목이 없어요.</div>';
+  $('pq').value=''; $('md').style.display='flex';
+}
+const closeM=()=>{ $('md').style.display='none' };
+$('pq').addEventListener('keydown',e=>{ if(e.key==='Enter') openPlat($('pq').value) });
+$('pq').addEventListener('change',()=>openPlat($('pq').value));
+$('mx').onclick=closeM; document.querySelector('.mbg').onclick=closeM;
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeM() });
+$('mbody').addEventListener('click',e=>{
+  if(e.target.closest('a')) return;
+  const tr=e.target.closest('[data-m]'); if(!tr) return;
+  const r=S.rows.find(x=>x.id==tr.dataset.m); if(!r) return;
+  closeM(); cur=r.plat; render(r.id);
+});
+
+/* ===== 시트 삭제(비활성, 필요시 노출 가능) ===== */
+let confirmDel=null;
+function ds(){
+  const w=$('dsWrap');
+  if(cur==='전체' || cur==='__ch'){ w.innerHTML=''; confirmDel=null; return }
+  const n=S.rows.filter(r=>r.plat===cur).length;
+  w.innerHTML = confirmDel===cur
+    ? `<span style="color:var(--dg);font-size:13px">"${esc(cur)}" 시트와 ${n}개 항목을 삭제할까요?</span><button class="del" data-ds="yes" style="border-color:var(--dg)">삭제</button><button data-ds="no">취소</button>`
+    : '';
+}
+$('dsWrap').addEventListener('click',e=>{
+  const b=e.target.closest('[data-ds]'); if(!b) return;
+  if(b.dataset.ds==='no'){ confirmDel=null; ds() }
+  else if(b.dataset.ds==='yes'){
+    S.rows=S.rows.filter(r=>r.plat!==cur); S.plats=S.plats.filter(p=>p!==cur);
+    cur='전체'; confirmDel=null; $('fPlat').value=S.plats[0]||''; save(); render();
+  }
+});
+
+/* ===== 채널별 ID & URL ===== */
+function renderCh(){
+  const L=S.ch||[];
+  $('chp').innerHTML = `<div class="chhead"><b>채널별 ID &amp; URL</b><span>나의 채널 계정 정보 · 복사/열기 버튼으로 바로 사용하세요</span><button id="chAdd" class="tab add">＋ 채널 추가</button></div><div class="chgrid">` +
+    L.map((c,i)=>`<div class="chcard" data-i="${i}">
+      <div class="chtop"><input class="chn" data-k="ch" value="${esc(c.ch)}"><button class="del mini" data-chdel="1" title="채널 삭제">×</button></div>
+      <div class="chrow"><label>ID</label><input data-k="id" value="${esc(c.id)}"><button class="cp" data-chcp="id" title="ID 복사">⧉</button></div>
+      <div class="chrow"><label>URL</label><input data-k="url" value="${esc(c.url)}"><button class="cp" data-chcp="url" title="URL 복사">⧉</button>${c.url?`<a class="op" href="${esc(url(c.url))}" target="_blank" rel="noopener">열기</a>`:''}</div>
+    </div>`).join('') + '</div>';
+}
+$('chp').addEventListener('input',e=>{
+  const k=e.target.dataset.k, card=e.target.closest('[data-i]'); if(!k||!card) return;
+  S.ch[+card.dataset.i][k]=e.target.value; save();
+});
+$('chp').addEventListener('change',e=>{ if(e.target.dataset.k==='url') renderCh() });
+$('chp').addEventListener('click',e=>{
+  if(e.target.closest('#chAdd')){ if(!loaded) return; S.ch.push({ch:'새 채널',id:'',url:''}); save(); renderCh(); return }
+  const card=e.target.closest('[data-i]'); if(!card) return;
+  const i=+card.dataset.i;
+  const cp=e.target.closest('[data-chcp]');
+  if(cp){ copyTxt(S.ch[i][cp.dataset.chcp]||'', cp); return }
+  if(e.target.closest('[data-chdel]')){ S.ch.splice(i,1); save(); renderCh() }
+});
+
+/* ===== 상품 이미지 ===== */
+let imgTarget=null;
+const fid=u=>{const m=/[?&]id=([^&]+)/.exec(u||'');return m?m[1]:''};
+const thumb=(u,w)=>{ if(!u) return ''; if(u.startsWith('data:')) return u; const m=/[?&]id=([^&]+)/.exec(u); return m?`https://drive.google.com/thumbnail?id=${m[1]}&sz=w${w}`:u };
+$('imgIn').addEventListener('change',e=>{
+  const f=e.target.files[0]; e.target.value=''; if(!f||imgTarget==null) return;
+  const id=imgTarget; setSt('이미지 올리는 중…');
+  const fr=new FileReader();
+  fr.onload=()=>{
+    const im=new Image();
+    im.onload=()=>{
+      const k=Math.min(1,800/Math.max(im.width,im.height)), c=document.createElement('canvas');
+      c.width=Math.round(im.width*k); c.height=Math.round(im.height*k);
+      c.getContext('2d').drawImage(im,0,0,c.width,c.height);
+      const data=c.toDataURL('image/jpeg',0.85);
+      google.script.run
+        .withSuccessHandler(u=>{ const r=S.rows.find(x=>x.id===id); if(r){ r.img=u; save(); closeM(); render(r.id) } setSt('✓ 이미지 저장됨') })
+        .withFailureHandler(er=>setSt('⚠ 이미지 저장 실패: '+(er&&er.message||'')+' → 드라이브 권한을 "모두 선택"으로 허용했는지 확인하세요'))
+        .uploadImage(data,(f.name||'image').replace(/\.[^.]+$/,''));
+    };
+    im.onerror=()=>setSt('⚠ 이미지를 읽을 수 없어요');
+    im.src=fr.result;
+  };
+  fr.readAsDataURL(f);
+});
+function showImg(r){
+  $('mt').textContent='상품 이미지 · '+(r.name||'');
+  $('mbody').innerHTML=`<img src="${esc(thumb(r.img,1000))}" style="max-width:100%;max-height:66vh;display:block;margin:12px auto;border-radius:10px"><div style="display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap"><button data-imgre="1">이미지 교체</button><button data-imgrm="1" class="del">이미지 삭제</button>${fid(r.img)?`<button data-imgcp="${fid(r.img)}">이미지 주소 복사</button><a class="op" href="https://drive.google.com/uc?export=download&id=${fid(r.img)}" target="_blank" rel="noopener">다운로드</a><a class="op" href="${esc(r.img)}" target="_blank" rel="noopener">원본 열기</a>`:''}</div>${fid(r.img)?'<div style="text-align:center;color:var(--mut);font-size:12px;margin:8px 0 4px">"이미지 주소 복사"로 복사한 주소는 다른 사이트·문서(구글 문서, 블로그 등)에 이미지로 넣을 수 있어요</div>':''}`;
+  $('md').style.display='flex';
+}
+$('mbody').addEventListener('click',e=>{
+  const cb=e.target.closest('[data-imgcp]');
+  if(cb){ copyTxt('https://lh3.googleusercontent.com/d/'+cb.dataset.imgcp, cb); return }
+  if(imgTarget==null) return;
+  const r=S.rows.find(x=>x.id===imgTarget); if(!r) return;
+  if(e.target.closest('[data-imgre]')) $('imgIn').click();
+  else if(e.target.closest('[data-imgrm]')){ r.img=''; save(); closeM(); render(r.id) }
+});
+
+render();
+load();
+</script>
+</body>
+</html>
